@@ -1,6 +1,6 @@
 /*
 
-In this code we are are finding finding the maximu price cut by calculating all the values previously. We are taking all the possible cuts and returning the appropriate value.
+In this code we are are finding the maximum price cut by calculating all the values previously. We are taking all the possible cuts and returning the appropriate value.
 
 */
 
