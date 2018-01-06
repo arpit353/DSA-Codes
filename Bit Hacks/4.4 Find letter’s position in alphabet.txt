@@ -1,0 +1,7 @@
+We can easily find a letter’s position [1-26] in the alphabet by taking its AND with ASCII 31 (00011111 in binary).
+
+For example,
+
+(‘A’ & 31) returns position 1
+(‘c’ & 31) returns position 3
+
