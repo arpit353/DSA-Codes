@@ -1,0 +1,313 @@
+Linked List Implementation in C
+
+We have introduced linked list data structure and discussed about various types of linked lists. We have also covered the applications of linked list data structure and its pros and cons with respect to arrays. In this post, we will discuss various Linked List implementation techniques in detail and construct a singly linked list.
+
+1. Structure of Linked List node –
+Let’s start by discussing about structure of a linked list node. Each node of a linked list contains a single data element and a pointer to the next node in the list.
+
+struct Node 
+{
+    int data;                // integer data
+    struct Node* next;        // pointer to the next node
+};
+
+2. Memory allocation of Linked List nodes –
+
+The nodes which will make up the body of the list are allocated in the heap memory. We can allocate dynamic memory in C using malloc() or calloc() function. malloc() takes a single argument (the amount of memory to allocate in bytes), while calloc() needs two arguments (the number of variables to allocate in memory, and the size in bytes of a single variable). malloc() does not initialize the memory allocated, while calloc() guarantees that all bytes of the allocated memory block have been initialized to 0. To deallocate the alloted memory we can use free().
+
+struct Node* newNode(int key)
+{
+    // Allocate the new node in the heap using malloc() and set its data
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = key;
+    
+    // Set the .next pointer of the new node to point to null
+    node->next = nullptr;
+ 
+    return node;
+}
+
+We can use new operator in C++ for dynamic memory allocation and delete operator to deallocate the alloted memory.
+
+Node* newNode(int key)
+{
+    // Allocate the new node in the heap using new operator and set its data
+    Node* newNode = new Node;
+    newNode->data = key;
+    
+    // Set the .next pointer of the new node to point to null
+    newNode->next = nullptr;
+ 
+    return newNode;
+}
+
+3. Constructing Linked List
+This section covers various methods to construct a linked list.
+ 
+Method 1 (Naive) –
+Naive solution would be to construct individual linked list nodes first and rearrange their pointers later to build the list.
+
+Node* newNode(int key)
+{
+    // Allocate the new node in the heap and set its data
+    Node* node = new Node();
+    node->data = key;
+    
+    // .next pointer of the new node points to nothing
+    node->next = nullptr;
+ 
+    return node;
+}
+ 
+// Naive function for Linked List Implementation containing three nodes
+Node* constructList()
+{
+    // construct three linked list nodes
+    Node *first = newNode(1);
+    Node *second = newNode(2);
+    Node *third = newNode(3);
+ 
+    // rearrange the pointers to construct a list
+    Node *head = first;
+    first->next = second;
+    second->next = third;
+ 
+    // return pointer to first node in the list
+    return head;
+}
+
+Method 2 (Single line) –
+Above code can be re-written in a single line by passing next node as an argument to the newNode() function –
+
+Node* newNode(int key, Node* next_node)
+{
+    // Allocate the new node in the heap and set its data
+    Node* node = new Node();
+    node->data = key;
+    
+    // Set the .next pointer of the new node to point to the current
+    // first node of the list.
+    node->next = next_node;
+ 
+    return node;
+}
+ 
+// Naive function for Linked List Implementation containing three nodes
+Node* constructList()
+{
+    Node *head = newNode(1, newNode(2, newNode(3, nullptr)));
+    return head;
+}
+
+Method 3 (Generic) –
+
+Above discussed methods would become a pain if number of nodes required is very large in the linked list. We can construct a linked list easily using iteration if the keys are given in the form of an array or any other data structure (using its iterator). Below is the implementation of the idea.
+
+Node* newNode(int key, Node* next_node)
+{
+    // Allocate the new node in the heap and set its data
+    Node* node = new Node();
+    node->data = key;
+    
+    // Set the .next pointer of the new node to point to the current
+    // first node of the list.
+    node->next = next_node;
+ 
+    return node;
+}
+ 
+// Function for Linked List Implementation from given set of keys
+Node* constructList(int keys[], int n)
+{
+    Node *head = nullptr, *node = nullptr;
+ 
+    // start from end of the array
+    for (int i = n - 1; i >= 0; i--)
+    {
+        node = newNode(keys[i], node);
+        head = node;
+    }
+ 
+    return head;
+}
+
+Method 4 (Standard) –
+Standard function adds a single node to the head end of any list. This function is called Push() since we’re adding the link to the head end which makes the list look a bit like a stack. Alternately, it could be called InsertAtFront().
+
+
+void push(struct node* head, int data)
+{
+    // Allocate the new node in the heap and set its data
+    struct node* newNode = (struct Node*)malloc(sizeof(struct node));
+    newNode->data = data;
+    
+    // Set the .next pointer of the new node to point to the current
+    // first node (head node) of the list.
+    newNode->next = head;
+ 
+    // Change the head pointer to point to the new node, so it is
+    // now the first node in the list.
+    head = newNode; // No, this line does not work! (Why?)
+}
+ 
+// Function for Linked List Implementation from given set of keys
+struct Node* constructList(int keys[], int n)
+{
+    struct Node *head = nullptr;
+ 
+    // start from end of the array
+    for (int i = n - 1; i >= 0; i--)
+        push(head, keys[i]);  // try to push a key on front - doesn't work
+ 
+    return head;
+}
+
+Above code does not work as changes to local parameters are never reflected back in the caller’s memory. The traditional method to allow a function to change its caller’s memory is to pass a pointer to the caller’s memory instead of a copy. So in C, to change an int in the caller, pass a int* instead. In general, to change an X, we pass an X*. So in this case, the value we want to change is struct node*, so we pass a struct node** instead. i.e. the type of the head pointer is “pointer to a struct node.” and in order to change that pointer, we need to pass a pointer to it, which will be a “pointer to a pointer to a struct node”.
+
+
+void push(struct Node** headRef, int data)
+{
+    // Allocate the new node in the heap and set its data
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+ 
+    // Set the .next pointer of the new node to point to the current
+    // first node of the list.
+    newNode->next = *headRef; // '*' to dereferences back to the real head
+    
+    // Change the head pointer to point to the new node, so it is
+    // now the first node in the list.
+    *headRef = newNode;
+}
+ 
+// Function for Linked List Implementation from given set of keys
+struct Node* constructList(int keys[], int n)
+{
+    struct Node *head = nullptr;
+ 
+    // start from end of the array
+    for (int i = n - 1; i >= 0; i--)
+        push(&head, keys[i]);
+ 
+    return head;
+}
+
+
+Code in C++ –
+ 
+
+C++ has its built in “& argument” feature to implement reference parameters for the programmer. The short story is, append an ‘&’ to the type of a parameter, and the compiler will automatically make the parameter operate by reference for you. The type of the argument is not disturbed by this — the types continue to act as they appear in the source, which is the most convenient for the programmer.
+
+void push(Node* &headRef, int data)
+{
+    // Allocate the new node in the heap and set its data
+    Node* newNode = new Node;
+    newNode->data = data;
+    
+    // Set the .next pointer of the new node to point to the current
+    // first node of the list.
+ 
+    // No extra use of * necessary on head -- the compiler
+    // just takes care of it behind the scenes.
+    newNode->next = headRef;
+ 
+    // Change the head pointer to point to the new node, so it is
+    // now the first node in the list.
+    headRef = newNode;
+}
+ 
+// Function for Linked List Implementation from given set of keys
+Node* constructList(int keys[], int n)
+{
+    Node *head = nullptr;
+ 
+    // start from end of the array
+    for (int i = n - 1; i >= 0; i--)
+    {
+        // Note that no extra use & necessary -- the compiler takes
+        // care of it here too. Head is being changed by these calls.
+        
+        push(head, keys[i]);
+    }
+    
+    return head;
+}
+
+
+There are two more approaches to solve this problem –
+
+1. Make head pointer global
+
+// Data Structure to store a linked list node
+struct Node
+{
+    int data;
+    Node* next;
+};
+ 
+// global head pointer
+struct Node *head = nullptr;
+ 
+// Takes a list and a data value and creates a new link with the given 
+// data and pushes it onto the front of the list.
+void push(int data)
+{
+    // Allocate the new node in the heap and set its data
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+ 
+    // Set the .next pointer of the new node to point to the current
+    // head node of the list.
+    newNode->next = head;
+ 
+    // Change the head pointer to point to the new node, so it is
+    // now the first node in the list.
+    head = newNode;
+}
+ 
+// Function for Linked List Implementation from given set of keys
+void constructList(int keys[], int n)
+{
+    // start from end of the array
+    for (int i = n - 1; i >= 0; i--)
+        push(keys[i]);
+}
+
+
+
+Above approach is not recommended as global variables are usually considered bad practice precisely because of their non-locality: a global variable can potentially be modified from anywhere (unless they reside in protected memory or are otherwise rendered read-only), and any part of the program may depend on it. A global variable therefore has an unlimited potential for creating mutual dependencies, and adding mutual dependencies increases complexity. Global variables also make it difficult to integrate modules because software written by others may use the same global names unless names are reserved by agreement, or by naming convention.
+
+ 
+
+2. Return head from the push() function
+
+/*
+Takes a list and a data value and creates a new link with the given data 
+and pushes it onto the front of the list.
+*/
+struct Node* push(struct Node* head, int data)
+{
+    // Allocate the new node in the heap and set its data
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+ 
+    // Set the .next pointer of the new node to point to the current
+    // first node of the list.
+    newNode->next = head;
+ 
+    // return the new node, so it becomes the first node in the list
+    return newNode;
+}
+ 
+// Function for Linked List Implementation from given set of keys
+struct Node* constructList(int keys[], int n)
+{
+    struct Node *head = nullptr;
+ 
+    // start from end of the array
+    for (int i = n - 1; i >= 0; i--)
+        head = push(head, keys[i]);        // update head here
+ 
+    return head;
+}
+

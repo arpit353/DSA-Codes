@@ -1,0 +1,40 @@
+Introduction to linked list
+
+
+A linked list is a linear data structure consisting of a group of nodes where each node point to the next node by means of a pointer. Each node is composed of data and a reference (in other words, a link) to the next node in the sequence.
+
+Linked List
+
+Linked lists are among the simplest and most common data structures. The principal benefits of a linked list over a conventional array are –
+
+The list elements can easily be inserted or removed without reallocation or reorganization of the entire structure because the data items need not be stored contiguously in memory, while an array has to be declared in the source code, before compiling and running the program.
+ 
+Linked lists allow insertion and removal of nodes at any point in the list, and can do so with a constant number of operations if the link previous to the link being added or removed is maintained during list traversal.
+On the other hand, simple linked lists by themselves do not allow random access to the data, or any form of efficient indexing. Thus, many basic operations — such as obtaining the last node of the list, or finding a node that contains a given data, or locating the place where a new node should be inserted — may require sequential scanning of most or all of the list elements.
+ 
+Common Types of Linked Lists –
+
+Singly linked list
+
+Singly linked lists contain nodes which have a data field as well as a ‘next’ field, which points to the next node in line of nodes. Operations that can be performed on singly linked lists include insertion, deletion and traversal. 
+
+Doubly linked list
+In a ‘doubly linked list’, each node contains, besides the next-node link, a second link field pointing to the ‘prev’ node in the sequence.
+
+A technique known as XOR-linking allows a doubly linked list to be implemented using a single link field in each node.
+
+Circular Linked list
+
+In the last node of a list, the link field often contains a null reference, a special value used to indicate the lack of further nodes. In the case of a circular doubly linked list, the the end, or “tail”, of the said list is linked back to the front, or “head”, of the list. The major advantage of circularly linked lists is its ability to traverse the full list beginning at any given node. 
+
+Applications –
+ 
+Linked lists are a dynamic data structure, which can grow and be pruned, allocating and deallocating memory while the program is running.
+
+Dynamic data structures such as stacks and queues can be implemented using a linked list along with several other common abstract data types, including lists, and associative arrays.
+ 
+Many modern operating systems use doubly linked lists to maintain references to active processes, threads, and other dynamic objects.
+ 
+A hash table may use linked lists to store the chains of items that hash to the same position in the hash table.
+ 
+A binary tree can be seen as a type of linked list where the elements are themselves linked lists of the same nature. The result is that each node may include a reference to the first node of one or two other linked lists, which, together with their contents, form the subtrees below that node.

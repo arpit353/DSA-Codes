@@ -18,6 +18,9 @@ The sub-arrays with 0 sum are:
 { 3, 1, 3, 1, -4, -2, -2 }
 { 3, 4, -7, 3, 1, 3, 1, -4, -2, -2 }
 
+
+This code can be extended for a particular sum like 6. Wecan check for every sum if sum-6 exist in the the set.
+
 */
 
 

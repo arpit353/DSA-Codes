@@ -1,0 +1,219 @@
+Implement Linked List | Insertion at the tail
+
+we have introduced linked list data structure and discussed about various types of linked lists.. We also covered in great detail the various methods to construct a linked list which inserts every new node onto the front of the list. In this post, we will discuss various methods to implement linked list by inserting onto the tail of the singly linked list.
+
+Simple solution would be to locate the last node in the list, and then changing its .next field from nullptr to point to the new node. This is just a special case of the general rule: to insert or delete a node inside a list, you need a pointer to the node just before that position, so you can change its .next field. Many list problems include the sub-problem of advancing a pointer to the node before the point of insertion or deletion. The one exception is if the node is the first in the list — in that case the head pointer itself must be changed.
+
+Consider below appendNode() function which is like Push(), except it adds the new node at the tail end of the list instead of the head. If the list is empty, it uses the reference pointer to change the head pointer. Otherwise it uses a loop to locate the last node in the list. This version does not use Push(). It builds the new node directly.
+
+#include <bits/stdc++.h>
+using namespace std;
+ 
+struct Node
+{
+    int data;
+    Node* next;
+};
+ 
+struct Node* newNode(int key)
+{
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = key;
+    node->next = nullptr;
+ 
+    return node;
+}
+ 
+void printList(struct Node* head)
+{
+    struct Node* ptr = head;
+    while (ptr)
+    {
+        cout << ptr->data << " -> ";
+        ptr = ptr->next;
+    }
+ 
+    cout << "null";
+}
+ 
+struct Node* appendNode(struct Node** headRef, int key)
+{
+    struct Node* current = *headRef;
+    struct Node* node = newNode(key);
+ 
+    if (current == nullptr)
+    {
+        *headRef = node;
+    }
+    else
+    {
+        while (current->next != nullptr)
+            current = current->next;
+ 
+        current->next = node;
+    }
+}
+ 
+int main()
+{
+    int keys[] = {1, 2, 3, 4};
+    int n = sizeof(keys)/sizeof(keys[0]);
+ 
+    struct Node* head = nullptr;
+ 
+    for (int i = 0; i < n; i++)
+        appendNode(&head, keys[i]);
+ 
+    printList(head);
+ 
+    return 0;
+}
+
+
+Below version is very similar to above code, but relies on Push() to build the new node. Understanding this version requires a real understanding of reference pointers.
+
+In this below code current->next value get updated because it has passed the address value of current->next. In this the orignal variable is passed with a address. That's why current->next value get changed and we don't need to manully set the value of current->next valiable. 
+
+
+#include <bits/stdc++.h>
+using namespace std;
+ 
+struct Node
+{
+    int data;
+    Node* next;
+};
+ 
+struct Node* newNode(int key)
+{
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = key;
+    node->next = nullptr;
+ 
+    return node;
+}
+ 
+void printList(struct Node* head)
+{
+    struct Node* ptr = head;
+    while (ptr)
+    {
+        cout << ptr->data << " -> ";
+        ptr = ptr->next;
+    }
+ 
+    cout << "null";
+}
+ 
+void push(struct Node** headRef, int data)
+{
+
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+ 
+    newNode->next = *headRef;
+ 
+    *headRef = newNode;
+}
+ 
+struct Node* appendNode(struct Node** headRef, int key)
+{
+    struct Node* current = *headRef;
+ 
+    if (current == nullptr)
+        push(headRef, key);
+    else
+    {
+        while (current->next != nullptr)
+            current = current->next;
+
+        push(&(current->next), key);
+    }
+}
+ 
+int main()
+{
+    int keys[] = {1, 2, 3, 4};
+    int n = sizeof(keys)/sizeof(keys[0]);
+ 
+    struct Node* head = nullptr;
+ 
+    for (int i = 0; i < n; i++)
+        appendNode(&head, keys[i]);
+ 
+    printList(head);
+ 
+    return 0;
+}
+
+The time complexity of each insertion in above solution would be linear as for each insertion we’re traversing the whole list till the very end. Efficient approach is to maintain a tail pointer along with head pointer to perform insertion in constant time. There are two standard ways to do it –
+
+ 
+
+1. Build using Dummy Node –
+The idea is to use a temporary dummy node at the head of the list during the computation. The trick is that with the dummy, every node appear to be added after the .next field of a node. That way the code for the first node is the same as for the other nodes. The tail pointer plays the same role as in the previous example. The difference is that it now also handles the first node (avoids making the dummy a permanent part of the list).
+
+We take a dummy variable and add all the elemnts in the next of the dummay variable. We do this by passing dummy->next by reference and push nodes at them. tail->next get updated because we have passed its address in the function.
+
+void push(struct Node** headRef, int data)
+{
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+ 
+    newNode->next = *headRef;
+ 
+    *headRef = newNode;
+}
+ 
+struct Node* constructList(int keys[], int n)
+{
+    struct Node dummy; 
+    struct Node* tail = &dummy; 
+ 
+    dummy.next = nullptr;
+ 
+    for (int i = 0; i < n; i++)
+    {
+        push(&(tail->next), keys[i]);
+        tail = tail->next;
+    }
+ 
+    return (dummy.next);
+}
+
+Some linked list implementations keep the dummy node as a permanent part of the list. For this “permanent dummy” strategy, the empty list is not represented by a nullptr pointer. Instead, every list has a dummy node at its head. Algorithms skip over the dummy node for all operations. That way the heap allocated dummy node is always present to provide the above sort of convenience in the code.
+
+ 
+2. Build using Local References –
+
+Finally, here is a tricky way to unifying all the node cases without using a dummy node. The trick is to use a local “reference pointer” which always points to the last pointer in the list instead of to the last node. All additions to the list are made by following the reference pointer. The reference pointer starts off pointing to the head pointer. Later, it points to the .next field inside the last node in the list.
+
+Similar thing we have done here we have passed the address of variable in the function.
+
+void push(struct Node** headRef, int data)
+{
+
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+ 
+    newNode->next = *headRef;
+ 
+    *headRef = newNode;
+}
+ 
+struct Node* constructList(int keys[], int n)
+{
+    struct Node* head = nullptr;
+    
+    struct Node** lastPtrRef = &head;
+ 
+    for (int i = 0; i < n; i++)
+    {
+        push(lastPtrRef, keys[i]);        
+        lastPtrRef= &((*lastPtrRef)->next);
+    }
+ 
+    return head;
+}
+
+
